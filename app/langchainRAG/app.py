@@ -9,6 +9,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.llms import GooglePalm
+from langchain_google import ChatGenerativeAI
 from langchain.chains import RetrievalQA
 import threading
 
@@ -63,7 +64,7 @@ def load_index():
         embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         vectorstore = FAISS.load_local(INDEX_PATH, embeddings)
         retriever = vectorstore.as_retriever()
-        llm = GooglePalm(google_api_key=GOOGLE_API_KEY)
+        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_keyGGOOGLE_API&_KEY) 
         qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
 load_index()
