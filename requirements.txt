@@ -1,0 +1,23 @@
+# Core dependencies
+fastapi
+uvicorn
+pydantic
+python-dotenv
+
+# LangChain and vector store
+langchain
+langchain-core
+langchain-google
+faiss-cpu
+
+# Embeddings and LLMs
+sentence-transformers
+
+# PDF and file handling
+PyPDF2
+
+# Google LLM 
+google-generativeai
+
+# Optional: CORS for FastAPI
+starlette
