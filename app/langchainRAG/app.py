@@ -15,7 +15,6 @@ import threading
 
 app = FastAPI()
 
-# Allow CORS for all origins (customize as needed)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,7 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load environment variables
 env_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(env_path)
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', 'gemini-api-key')
@@ -34,12 +32,10 @@ INDEX_PATH = os.path.join(os.path.dirname(__file__), 'vector.index')
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Global objects (thread-safe for demo, use better state management in prod)
 vectorstore = None
 retriever = None
 qa_chain = None
 
-# Helper: Preprocess and index file
 def preprocess_and_index(file_path):
     global vectorstore, retriever, qa_chain
     if file_path.endswith('.txt'):
@@ -49,7 +45,7 @@ def preprocess_and_index(file_path):
     documents = loader.load()
     splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     docs = splitter.split_documents(documents)
-    # Use local HuggingFace embeddings
+ 
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     vectorstore = FAISS.from_documents(docs, embeddings)
     vectorstore.save_local(INDEX_PATH)
@@ -57,7 +53,7 @@ def preprocess_and_index(file_path):
     llm = ChatGenerativeAI(model="gemini-2.5-flash",google_api_key=GOOGLE_API_KEY)
     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
-# Helper: Load index if exists
+# Load index if exists
 def load_index():
     global vectorstore, retriever, qa_chain
     if os.path.exists(INDEX_PATH):
