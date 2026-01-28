@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 from dotenv import load_dotenv
-from langchain.document_loaders import TextLoader
+from langchain.document_loaders import TextLoader, PyPdfLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -41,7 +41,10 @@ qa_chain = None
 # Helper: Preprocess and index file
 def preprocess_and_index(file_path):
     global vectorstore, retriever, qa_chain
-    loader = TextLoader(file_path)
+    if file_path.endswith('.txt'):
+        loader = TextLoader(file_path)
+    else:
+        loader = PyPdfLoader(file_path)
     documents = loader.load()
     splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     docs = splitter.split_documents(documents)
@@ -50,7 +53,7 @@ def preprocess_and_index(file_path):
     vectorstore = FAISS.from_documents(docs, embeddings)
     vectorstore.save_local(INDEX_PATH)
     retriever = vectorstore.as_retriever()
-    llm = GooglePalm(google_api_key=GOOGLE_API_KEY)
+    llm = ChatGenerativeAI(model="gemini-2.5-flash",google_api_key=GOOGLE_API_KEY)
     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
 # Helper: Load index if exists
