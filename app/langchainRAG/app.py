@@ -26,7 +26,7 @@ app.add_middleware(
 # Load environment variables
 env_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(env_path)
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', 'gemini-api-key')
 
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), 'uploads')
 INDEX_PATH = os.path.join(os.path.dirname(__file__), 'vector.index')
